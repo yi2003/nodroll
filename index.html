@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#06040d">
+<title>TILT LAB · Head-Tilt Marble Maze</title>
+<link rel="stylesheet" href="./src/style.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js" } }
+</script>
+</head>
+<body>
+<canvas id="game"></canvas>
+<video id="cam" playsinline muted autoplay></video>
+
+<div id="hud" class="hidden">
+  <div class="hud-left">
+    <div class="hud-item"><span class="label">Level</span><span class="val" id="hud-level">01</span></div>
+    <div class="hud-item"><span class="label">Time</span><span class="val" id="hud-time">0.0</span></div>
+    <div class="hud-item"><span class="label">Falls</span><span class="val" id="hud-falls">0</span></div>
+    <div class="hud-item ghost"><span class="label">Best</span><span class="val" id="hud-best">--</span></div>
+  </div>
+
+  <div class="hud-right">
+    <div id="cam-panel">
+      <canvas id="cam-view" width="200" height="150"></canvas>
+      <div id="cam-status"><span class="dot" id="face-dot"></span><span id="face-text">Camera off</span></div>
+    </div>
+
+    <div id="tilt-widget">
+      <div class="bubble">
+        <div class="cross"></div>
+        <span id="bubble-dot"></span>
+      </div>
+      <div class="bars">
+        <div class="bar"><i id="bar-x"></i></div>
+        <div class="bar v"><i id="bar-y"></i></div>
+      </div>
+    </div>
+
+    <button id="btn-gear" title="Settings / pause (Esc)">⚙</button>
+  </div>
+</div>
+
+<div id="banner" class="hidden"></div>
+
+<div id="drawer" class="hidden">
+  <div class="drawer-card">
+    <h2>Settings / Pause</h2>
+    <div class="field">
+      <span class="fl">Control</span>
+      <div class="seg">
+        <button id="set-mode-face" class="seg-btn">Camera</button>
+        <button id="set-mode-kb" class="seg-btn">Keyboard / drag</button>
+      </div>
+    </div>
+    <label class="field">
+      <span class="fl">Tilt sensitivity <b id="sens-val">1.00×</b></span>
+      <input id="set-sens" type="range" min="0.4" max="2.2" step="0.05" value="1">
+    </label>
+    <label class="field row"><input id="set-invx" type="checkbox"><span>Invert left / right</span></label>
+    <label class="field row"><input id="set-invy" type="checkbox"><span>Invert forward / back</span></label>
+    <label class="field row"><input id="set-pauselost" type="checkbox" checked><span>Pause when the face is lost</span></label>
+    <label class="field row"><input id="set-mute" type="checkbox"><span>Mute</span></label>
+    <div class="drawer-actions">
+      <button id="btn-recal" class="ghost-btn">Recalibrate (C)</button>
+      <button id="btn-restart-level" class="ghost-btn">Restart level (R)</button>
+      <button id="btn-clip-drawer" class="ghost-btn">Save last 8s clip</button>
+      <button id="btn-resume" class="primary">Resume</button>
+    </div>
+    <p class="hint">Head tilt: lean left/right to roll the board sideways, nod up/down to pitch it.
+      If a direction feels reversed, flip it above. The camera feed is processed locally and never uploaded.</p>
+  </div>
+</div>
+
+<div id="overlay-start" class="overlay">
+  <div class="panel">
+    <h1>TILT<span>LAB</span></h1>
+    <p class="sub">Tilt the board with your head and roll the ball into the green door</p>
+
+    <ul class="keys">
+      <li><b>Tilt head L/R</b><span>board rolls sideways</span></li>
+      <li><b>Nod up / down</b><span>board pitches forward</span></li>
+      <li><b>Hit a wall</b><span>you bounce a little</span></li>
+      <li><b>Fall in a hole</b><span>back to the start</span></li>
+      <li><b>Face lost</b><span>board levels out / pauses</span></li>
+    </ul>
+
+    <div class="btn-col">
+      <button id="btn-start-kb" class="primary">Play with keyboard / drag</button>
+      <button id="btn-start-face" class="ghost-btn">Upgrade: head control (camera)</button>
+    </div>
+    <p class="tip">Keyboard: WASD / arrows tilt · R restart · Esc settings<br>
+      Head control is optional — turn it on any time from the settings drawer.</p>
+  </div>
+</div>
+
+<div id="overlay-clear" class="overlay hidden">
+  <div class="panel">
+    <h1 class="win" id="clear-title">Level cleared!</h1>
+    <p class="sub" id="clear-stats"></p>
+    <div class="btn-col">
+      <button id="btn-next" class="primary">Next level</button>
+      <button id="btn-retry" class="ghost-btn">Retry</button>
+      <button id="btn-clip" class="ghost-btn hidden">Save clip (last 8s)</button>
+    </div>
+  </div>
+</div>
+
+<div id="ghost" class="hidden"></div>
+<div id="fade"></div>
+<div id="toast"></div>
+<div id="flash"></div>
+<div id="loading">Loading…</div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

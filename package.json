@@ -1,0 +1,11 @@
+{
+  "name": "nodroll",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TILT LAB — head-tilt controlled marble maze (three.js + MediaPipe FaceLandmarker)",
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "check": "node tools/check-levels.mjs"
+  }
+}
