@@ -41,7 +41,7 @@ Floating labels mark each beat.
 
 | Input | Action |
 | --- | --- |
-| Tilt head left / right | board rolls sideways (roll) |
+| Tilt head left / right | board rolls the same way (roll) |
 | Nod up / down | board pitches forward / back (pitch) |
 | Arrow keys / WASD | tilt the board (no camera needed — switch any time) |
 | Mouse / finger drag | drag a side down to tilt that way |
@@ -78,7 +78,9 @@ vendor/                three.js r160 + MediaPipe tasks-vision wasm and model
 ## Implementation notes
 
 **Head pose → tilt.** Roll comes from the angle of the outer-eye-corner line (FaceMesh 33 / 263) —
-stable and almost unaffected by expression. Pitch is taken from the euler angle decomposed out of the
+stable and almost unaffected by expression, and it is mapped straight through: **tilt your head to one
+side and the board rolls that same way** (flip *Invert left / right* in the settings drawer if your camera
+mirrors it). Pitch is taken from the euler angle decomposed out of the
 4×4 facial transformation matrix. The median of the first ~20 stable frames becomes the neutral
 baseline; afterwards the signal goes through a dead zone, a smoothstep curve and exponential smoothing
 into −1..1, scaled to a maximum tilt of 17°. More than 500 ms without a detected face counts as "lost":

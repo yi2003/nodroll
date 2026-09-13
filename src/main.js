@@ -153,10 +153,19 @@ const clip = new ClipRecorder(canvas, 8);
 const isTouch = window.matchMedia?.('(pointer: coarse)')?.matches ?? false;
 
 // keyboard / drag is the default path on desktop; head control is an upgrade
+const savedSettings = readJSON('tiltlab.settings') || {};
 const settings = Object.assign(
   { mode: 'kb', sens: 1, invX: false, invY: false, pauseOnLost: true, muted: false },
-  readJSON('tiltlab.settings')
+  savedSettings
 );
+// v2 maps the head-roll axis straight through (tilt your head left -> the board
+// rolls left). An "invert left/right" choice saved before that would double-flip
+// it, so those two flags are reset once.
+if (savedSettings.v !== 2) {
+  settings.invX = false;
+  settings.invY = false;
+}
+settings.v = 2;
 let bestTimes = readJSON('tiltlab.best') || {};
 
 // adaptive quality: weak machines degrade automatically to stay responsive
@@ -409,7 +418,9 @@ function computeTilt(dt) {
   const faceOk = settings.mode === 'face' && tracker.ready && tracker.calibrated && tracker.present;
 
   if (faceOk) {
-    x = tracker.roll;
+    // The raw eye-corner angle runs opposite to screen-right, so it is negated:
+    // tilt your head to one side and the board rolls that same way.
+    x = -tracker.roll;
     y = tracker.pitch;
   } else {
     const kb = tiltInput.update(dt);
@@ -642,7 +653,7 @@ function drawCamPreview(dt) {
   camCtx.stroke();
   camCtx.fillStyle = '#8b3bff';
   camCtx.beginPath();
-  camCtx.arc(cx + THREE.MathUtils.clamp(tracker.roll, -1, 1) * 16, cy - THREE.MathUtils.clamp(tracker.pitch, -1, 1) * 16, 5, 0, Math.PI * 2);
+  camCtx.arc(cx - THREE.MathUtils.clamp(tracker.roll, -1, 1) * 16, cy - THREE.MathUtils.clamp(tracker.pitch, -1, 1) * 16, 5, 0, Math.PI * 2);
   camCtx.fill();
 }
 
